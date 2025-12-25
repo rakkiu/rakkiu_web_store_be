@@ -38,7 +38,7 @@ namespace Infrastructure.Identity
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim("FullName", user.FullName ?? string.Empty),
+                new Claim("fullName", user.FullName ?? ""),
 
                 // claim động để mỗi token là duy nhất
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),

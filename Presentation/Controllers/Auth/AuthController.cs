@@ -1,10 +1,10 @@
 ﻿using Application.Model.Auth.Login;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Presentation.Common;
 using Microsoft.AspNetCore.Mvc;
 using Application.Usecase.Auth.Login;
 using Application.Usecase.Auth.Logout;
+using Application.Usecase.Auth.AccountRegister;
 namespace Presentation.Controllers.Auth
 {
     [Route("api/[controller]")]
@@ -34,9 +34,11 @@ namespace Presentation.Controllers.Auth
 
         [HttpPost("logout")]
         [ProducesResponseType(typeof (ApiResponse<>), 200)]
+        [ProducesResponseType(typeof(ApiResponse<>), 400)]
+
         public async Task<ActionResult<ApiResponse<object?>>> Logout([FromBody] LogoutCommand command, CancellationToken cancellationToken)
         {
-            var res = await _mediator.Send(command, cancellationToken);
+            await _mediator.Send(command, cancellationToken);
             return Ok(new ApiResponse<object?>
             {
                 StatusCode = 200,
@@ -44,6 +46,35 @@ namespace Presentation.Controllers.Auth
                 Data = null,
                 ResponsedAt = DateTime.UtcNow
             });
+        }
+
+        [HttpPost("account-register")]
+        [ProducesResponseType(typeof(ApiResponse<object>), 200)]
+        [ProducesResponseType(typeof(ApiResponse<object>), 400)]
+
+        public async Task<ActionResult<ApiResponse<object>>> AccountRegister([FromBody] AccountRegisterCommand command, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var res = await _mediator.Send(command, cancellationToken);
+                return Ok(new ApiResponse<object>
+                {
+                    StatusCode = 200,
+                    Message = "Account registration successful",
+                    Data = res,
+                    ResponsedAt = DateTime.UtcNow
+                });
+            }
+            catch
+            {
+                return Ok(new ApiResponse<object>
+                {
+                    StatusCode = 400,
+                    Message = "This email already created!",
+                    Data = null,
+                    ResponsedAt = DateTime.UtcNow
+                });
+            }
         }
     }
 }

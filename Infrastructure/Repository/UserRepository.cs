@@ -28,10 +28,7 @@ namespace Infrastructure.Repositories
         public async Task AddAsync(User user, CancellationToken ct = default)
         {
             user.Email = EncryptionHelper.EncryptDeterministic(user.Email);
-            user.Phone = EncryptionHelper.Encrypt(user.Phone);
-            user.FullName = EncryptionHelper.Encrypt(user.FullName);
-            user.Address = EncryptionHelper.Encrypt(user.Address);
-
+            user.PhoneNumber = EncryptionHelper.Encrypt(user.PhoneNumber);
             await _db.Users.AddAsync(user, ct);
         }
 
@@ -104,9 +101,7 @@ namespace Infrastructure.Repositories
         public void Update(User user)
         {
             user.Email = EncryptionHelper.EncryptDeterministic(user.Email);
-            user.Phone= EncryptionHelper.Encrypt(user.Phone);
-            user.FullName = EncryptionHelper.Encrypt(user.FullName);
-            user.Address = EncryptionHelper.Encrypt(user.Address);
+            user.PhoneNumber = EncryptionHelper.Encrypt(user.PhoneNumber);
 
             _db.Users.Update(user);
         }
@@ -126,8 +121,7 @@ namespace Infrastructure.Repositories
         {
             user.Email = EncryptionHelper.DecryptDeterministic(user.Email);
             // Use Decrypt (random IV) for Phone and Address as they are encrypted with Encrypt() in AddAsync
-            if (!string.IsNullOrEmpty(user.Phone)) user.Phone = EncryptionHelper.Decrypt(user.Phone);
-            if (!string.IsNullOrEmpty(user.Address)) user.Address = EncryptionHelper.Decrypt(user.Address);
+            if (!string.IsNullOrEmpty(user.PhoneNumber)) user.PhoneNumber = EncryptionHelper.Decrypt(user.PhoneNumber);
         }
 
         /// <summary>
@@ -149,7 +143,7 @@ namespace Infrastructure.Repositories
         public void UpdatePasswordOnly(User user)
         {
             var entry = _db.Entry(user);
-            entry.Property(u => u.PasswordHash).IsModified = true;
+            entry.Property(u => u.Password).IsModified = true;
         }
 
         /// <summary>
