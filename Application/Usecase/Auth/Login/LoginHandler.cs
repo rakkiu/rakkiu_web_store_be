@@ -54,7 +54,7 @@ namespace Application.Usecase.Auth.Login
         {
             // Validate user credentials
             var user = await _repo.GetByEmailAsync(request.Email, cancellationToken);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
                 throw new UnauthorizedAccessException("Invalid email or password.");
 
 

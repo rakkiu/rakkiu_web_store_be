@@ -26,7 +26,7 @@ namespace Infrastructure.Seed
             await context.SaveChangesAsync();
 
             // 2. Seed Default Seller User
-            var sellerEmail = "seller@rakkiu.com";
+            var sellerEmail = "s@tredx.com";
             var encryptedEmail = EncryptionHelper.EncryptDeterministic(sellerEmail);
 
             if (!await context.Users.AnyAsync(u => u.Email == encryptedEmail))
@@ -36,12 +36,39 @@ namespace Infrastructure.Seed
                 var user = new User
                 {
                     Id = Guid.NewGuid(),
-                    Username = "seller",
                     Email = encryptedEmail,
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Seller@123"),
-                    FullName = EncryptionHelper.Encrypt("Default Seller"),
-                    Phone = EncryptionHelper.Encrypt("0123456789"),
-                    Address = EncryptionHelper.Encrypt("System Default Address")
+                    Password = BCrypt.Net.BCrypt.HashPassword("test"),
+                    FullName = "Default Seller",
+                    PhoneNumber = EncryptionHelper.Encrypt("0123456789"),
+                };
+
+                await context.Users.AddAsync(user);
+
+                // 3. Assign Role
+                await context.UserRoles.AddAsync(new UserRole
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = user.Id,
+                    RoleId = sellerRole.Id
+                });
+
+                await context.SaveChangesAsync();
+            }
+
+            var testMail = "string";
+            var encryptedTestEmail = EncryptionHelper.EncryptDeterministic(testMail);
+
+            if (!await context.Users.AnyAsync(u => u.Email == encryptedTestEmail))
+            {
+                var sellerRole = await context.Roles.FirstAsync(r => r.Name == "Seller");
+
+                var user = new User
+                {
+                    Id = Guid.NewGuid(),
+                    Email = encryptedTestEmail,
+                    Password = BCrypt.Net.BCrypt.HashPassword("string"),
+                    FullName = "Default Seller",
+                    PhoneNumber = EncryptionHelper.Encrypt("0123456789"),
                 };
 
                 await context.Users.AddAsync(user);
