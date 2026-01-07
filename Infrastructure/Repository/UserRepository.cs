@@ -39,6 +39,8 @@ namespace Infrastructure.Repositories
         {
             var encryptedEmail = EncryptionHelper.EncryptDeterministic(email);
             var user = await _db.Users
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
                 .FirstOrDefaultAsync(u => u.Email == encryptedEmail, ct);
 
             if (user != null)

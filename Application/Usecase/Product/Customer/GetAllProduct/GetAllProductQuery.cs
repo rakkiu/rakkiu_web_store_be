@@ -8,7 +8,10 @@ using MediatR;
 
 namespace Application.Usecase.Product.Customer.GetAllProduct
 {
-    public record GetAllProductCommand : IRequest<List<GetAllProductDto>>;
+    public record GetAllProductQuery : IRequest<IEnumerable<GetAllProductDto>>
+    {
+
+    }
 
    
 }
